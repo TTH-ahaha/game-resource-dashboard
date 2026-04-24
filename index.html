@@ -104,7 +104,7 @@
     <main class="max-w-7xl mx-auto px-4 py-8">
         
         <div class="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 text-sm text-blue-800 flex justify-between items-center shadow-sm">
-            <span><strong>操作提示：</strong> 点击下方任意图表中的 <b>柱状图区块</b> 或 <b>折线图节点</b>，即可查看该品类对应的源数据详情。</span>
+            <span><strong>💡 操作提示升级：</strong> 点击下方任意 <b>单色柱状图区块</b>，可查看该品质单一明细；点击 <b>柱顶层悬浮的总计数字</b>（或柱体虚空处），即可获取该列<b>全部品类</b>的汇总与源数据详情。</span>
         </div>
 
         <!-- 模块一：资源品质分析 -->
@@ -156,11 +156,11 @@
     <!-- 🌟 悬浮模态弹窗版数据详情表 🌟 -->
     <div id="detail-modal" class="hidden fixed inset-0 z-[100] bg-gray-900 bg-opacity-60 backdrop-blur-sm flex justify-center items-center p-4 sm:p-6 opacity-0 transition-opacity duration-300" onclick="handleBackdropClick(event)">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-7xl max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300" id="detail-modal-content">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-xl">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-xl shrink-0">
                 <div>
                     <h3 class="text-xl font-bold text-gray-800 flex items-center" id="detail-table-title">
                         <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        数据详情关联
+                        数据概览与明细
                     </h3>
                     <p class="text-sm text-gray-500 mt-1" id="detail-table-subtitle">加载中...</p>
                 </div>
@@ -168,11 +168,47 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="p-6 overflow-auto flex-1 custom-scrollbar bg-white">
-                <table class="min-w-full divide-y divide-gray-200 text-sm" id="detail-table">
-                    <thead class="bg-gray-100 sticky top-0 shadow-sm z-10" id="detail-table-head"></thead>
-                    <tbody class="bg-white divide-y divide-gray-200" id="detail-table-body"></tbody>
-                </table>
+            
+            <div class="p-6 overflow-auto flex-1 custom-scrollbar bg-white" id="modal-tables-container">
+                <!-- 价格计算汇总表 -->
+                <div class="mb-10 relative">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-base font-bold text-gray-800 border-l-4 border-green-500 pl-3">所选物品价格计算详情</h4>
+                        <!-- 新增：导出 CSV 按钮 -->
+                        <button onclick="exportSummaryCSV()" class="flex items-center px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border border-green-200 rounded-md text-sm font-semibold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            一键导出汇总 CSV
+                        </button>
+                    </div>
+                    <div class="overflow-hidden border border-gray-200 rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm" id="summary-table">
+                            <thead class="bg-green-50" id="summary-table-head">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">资源名称</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">资源类型</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">资源品质</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-green-800 uppercase tracking-wider">投放总数量</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-green-800 uppercase tracking-wider">单价 (价值)</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-green-800 uppercase tracking-wider">总价值合计</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="summary-table-body"></tbody>
+                            <tfoot class="bg-gray-100 font-bold border-t-2 border-gray-300" id="summary-table-foot"></tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 原始底层明细表 -->
+                <div>
+                    <h4 class="text-base font-bold text-gray-800 mb-3 border-l-4 border-blue-500 pl-3">底层数据关联明细</h4>
+                    <div class="overflow-hidden border border-gray-200 rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm" id="detail-table">
+                            <thead class="bg-blue-50" id="detail-table-head"></thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="detail-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                
                 <div id="detail-table-empty" class="text-center py-16 hidden">
                     <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                     <p class="text-lg text-gray-500 font-medium">暂无匹配的数据记录</p>
@@ -209,8 +245,11 @@
         let availableValueLevels = new Set();
         let selectedValueLevels = new Set();
         
-        // 全局显示指标：'count' (资源个数) 或 'value' (总价值)
         let currentDisplayMetric = 'count'; 
+        
+        // 存储当前供导出的汇总数据和对应的标题
+        let currentSummaryDataForExport = [];
+        let currentExportTitle = "";
 
         // -------------------------
         // 核心视觉与容错排序逻辑
@@ -301,7 +340,7 @@
             qualityYearly: echarts.init(document.getElementById('chart-quality-yearly')),
             qualityQuarterly: echarts.init(document.getElementById('chart-quality-quarterly')),
             qualityMonthly: echarts.init(document.getElementById('chart-quality-monthly')),
-            qualityNode: echarts.init(document.getElementById('chart-quality-node')), // 新增图表实例
+            qualityNode: echarts.init(document.getElementById('chart-quality-node')), 
             ramadanQuality: echarts.init(document.getElementById('chart-ramadan-quality')),
             ramadanValue: echarts.init(document.getElementById('chart-ramadan-value'))
         };
@@ -341,7 +380,7 @@
                 let rawQuality = row['资源品质'] ? row['资源品质'].trim() : '';
                 let rawValue = row['价值高低'] ? row['价值高低'].trim() : '';
                 let resourceType = row['资源类型'] ? row['资源类型'].trim() : '未知类型';
-                let rawNode = row['节点'] ? row['节点'].trim() : ''; // 抓取节点字段
+                let rawNode = row['节点'] ? row['节点'].trim() : ''; 
                 
                 if (!resourceType) resourceType = '未指定';
                 if (!rawQuality || !rawValue || rawQuality === '未分类' || rawValue === '未分类') return;
@@ -378,13 +417,14 @@
                     _parsedYearMonth: yearMonth,
                     _parsedQuality: rawQuality,
                     _parsedValue: rawValue,
-                    _parsedNode: rawNode,             // 存储格式化后的节点信息
-                    _startDateObj: startDate,         // 存储 Date 对象以便后续严格比对先后
+                    _parsedNode: rawNode,             
+                    _startDateObj: startDate,         
                     _ramadanTagDynamic: ramadanTagDynamic, 
                     _ramadanTagFixed: ramadanTagFixed,     
                     _resourceType: resourceType,
                     _count: count,
-                    _totalValue: count * val
+                    _totalValue: count * val,
+                    _unitValue: val 
                 });
             });
             return processed;
@@ -504,7 +544,7 @@
             renderQualityYearly(currentFilteredData);
             renderQualityQuarterly(currentFilteredData);
             renderQualityMonthly(currentFilteredData);
-            renderQualityNode(currentFilteredData); // 渲染 1.4 节点图
+            renderQualityNode(currentFilteredData); 
             
             renderRamadanQuality(currentFilteredData);
             renderRamadanValue(currentFilteredData); 
@@ -512,67 +552,73 @@
             bindChartClickEvents();
         }
 
-        // --- 图表点击与反查逻辑 ---
+        // --- 🎯 全新升级：整列穿透点击与反查逻辑 ---
         function handleChartClick(chartKey, params) {
             let filteredData = [];
             let clickTitle = "";
 
             if (chartKey === 'qualityYearly') {
-                if(!params.name || params.seriesName === '总计') return; 
+                if(!params.name) return; 
                 let year = params.name.replace('年', '');
+                let isTotal = params.seriesName === '总计';
                 let quality = params.seriesName;
-                clickTitle = `${year}年 - 品质: ${quality}`;
+                clickTitle = `${year}年 - 品质: ${isTotal ? '全部汇总' : quality}`;
                 filteredData = currentFilteredData.filter(d => 
-                    d._parsedYear === year && d._parsedQuality === quality 
+                    d._parsedYear === year && (isTotal || d._parsedQuality === quality) 
                 );
             } 
             else if (chartKey === 'qualityQuarterly') {
-                if(!params.name || params.seriesName === '总计') return; 
+                if(!params.name) return; 
                 let yq = params.name;
+                let isTotal = params.seriesName === '总计';
                 let quality = params.seriesName;
-                clickTitle = `${yq}季度 - 品质: ${quality}`;
+                clickTitle = `${yq}季度 - 品质: ${isTotal ? '全部汇总' : quality}`;
                 filteredData = currentFilteredData.filter(d => 
-                    d._parsedYearQuarter === yq && d._parsedQuality === quality 
+                    d._parsedYearQuarter === yq && (isTotal || d._parsedQuality === quality) 
                 );
             } 
             else if (chartKey === 'qualityMonthly') {
-                if(!params.name || params.seriesName === '总计') return; 
+                if(!params.name) return; 
                 let ym = params.name;
+                let isTotal = params.seriesName === '总计';
                 let quality = params.seriesName;
-                clickTitle = `${ym} - 品质: ${quality}`;
+                clickTitle = `${ym} - 品质: ${isTotal ? '全部汇总' : quality}`;
                 filteredData = currentFilteredData.filter(d => 
-                    d._parsedYearMonth === ym && d._parsedQuality === quality 
+                    d._parsedYearMonth === ym && (isTotal || d._parsedQuality === quality) 
                 );
             } 
             else if (chartKey === 'qualityNode') {
-                if(!params.name || params.seriesName === '总计') return; 
+                if(!params.name) return; 
                 let nodeName = params.name;
+                let isTotal = params.seriesName === '总计';
                 let quality = params.seriesName;
-                clickTitle = `运营节点: [${nodeName}] - 品质: ${quality}`;
+                clickTitle = `运营节点: [${nodeName}] - 品质: ${isTotal ? '全部汇总' : quality}`;
                 filteredData = currentFilteredData.filter(d => 
-                    d._parsedNode === nodeName && d._parsedQuality === quality 
+                    d._parsedNode === nodeName && (isTotal || d._parsedQuality === quality) 
                 );
             }
             else if (chartKey === 'ramadanQuality') {
-                if(!params.data || !params.data._year || params.seriesName === '总计') return; 
+                if(!params.data || !params.data._year) return; 
                 let year = params.data._year; 
+                let isTotal = params.seriesName === '总计';
                 let quality = params.seriesName;
                 let period = params.data._period;
                 let days = params.data._nDays;
-                clickTitle = `${year}年 ${period}(等长周期${days}天) - 品质: ${quality}`;
+                clickTitle = `${year}年 ${period}(等长周期${days}天) - 品质: ${isTotal ? '全部汇总' : quality}`;
                 filteredData = currentFilteredData.filter(d => 
-                    d._parsedYear === year && d._parsedQuality === quality && d._ramadanTagDynamic === period
+                    d._parsedYear === year && (isTotal || d._parsedQuality === quality) && d._ramadanTagDynamic === period
                 );
             } 
             else if (chartKey === 'ramadanValue') {
-                if(!params.data || !params.data._year || params.seriesName === '总计') return; 
+                if(!params.data || !params.data._year) return; 
                 let year = params.data._year; 
+                let isTotal = params.seriesName === '总计';
                 let quality = params.seriesName;
                 let period = params.data._period; 
                 let customName = params.data._customName;
-                clickTitle = `${year}年 ${customName}(特定时段) - 品质: ${quality}`;
+                clickTitle = `${year}年 ${customName}(特定时段) - 品质: ${isTotal ? '全部汇总' : quality}`;
                 filteredData = currentFilteredData.filter(d => 
-                    d._parsedYear === year && d._parsedQuality === quality && d._ramadanTagFixed === period
+                    d._parsedYear === year && (isTotal || d._parsedQuality === quality) && d._ramadanTagFixed === period
                 );
             }
 
@@ -584,12 +630,44 @@
         const modal = document.getElementById('detail-modal');
         const modalContent = document.getElementById('detail-modal-content');
 
+        // CSV 导出功能
+        function exportSummaryCSV() {
+            if (!currentSummaryDataForExport || currentSummaryDataForExport.length === 0) {
+                alert("当前没有可导出的数据！");
+                return;
+            }
+            
+            const csvStr = Papa.unparse(currentSummaryDataForExport);
+            const blob = new Blob(['\uFEFF' + csvStr], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `价格计算汇总_${currentExportTitle}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            URL.revokeObjectURL(url);
+        }
+
         function renderDetailTable(title, data) {
+            currentExportTitle = title.replace(/[:\/\\?*|"<>\n\r]/g, "_");
+            currentSummaryDataForExport = []; 
+
             const subtitleEl = document.getElementById('detail-table-subtitle');
+            const emptyMsg = document.getElementById('detail-table-empty');
+            
+            // 明细表 DOM
             const thead = document.getElementById('detail-table-head');
             const tbody = document.getElementById('detail-table-body');
-            const emptyMsg = document.getElementById('detail-table-empty');
             const tableEl = document.getElementById('detail-table');
+
+            // 价格计算汇总表 DOM
+            const sumThead = document.getElementById('summary-table-head');
+            const sumTbody = document.getElementById('summary-table-body');
+            const sumTfoot = document.getElementById('summary-table-foot');
+            const sumTableContainer = document.getElementById('summary-table').parentElement.parentElement;
 
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden'; 
@@ -605,26 +683,124 @@
             
             document.getElementById('detail-table-title').innerHTML = `
                 <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                数据详情关联：${title}
+                【${title}】的明细数据
             `;
-            subtitleEl.innerHTML = `全局筛选条件 ➔ 资源类型: [${activeTypesStr}] | 价值高低: [${activeValuesStr}] | 当前统计算法: [${metricStr}] <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full font-bold">共 ${data.length} 条</span>`;
+            subtitleEl.innerHTML = `当前图表筛选项 ➔ 资源类型: [${activeTypesStr}] | 价值高低: [${activeValuesStr}] | 当前统计算法: [${metricStr}] <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full font-bold">共 ${data.length} 条记录</span>`;
 
+            // 清空旧数据
             thead.innerHTML = '';
             tbody.innerHTML = '';
+            sumTbody.innerHTML = '';
+            sumTfoot.innerHTML = '';
 
             if (data.length === 0) {
-                tableEl.classList.add('hidden');
+                tableEl.parentElement.parentElement.classList.add('hidden');
+                sumTableContainer.classList.add('hidden');
                 emptyMsg.classList.remove('hidden');
             } else {
-                tableEl.classList.remove('hidden');
+                tableEl.parentElement.parentElement.classList.remove('hidden');
+                sumTableContainer.classList.remove('hidden');
                 emptyMsg.classList.add('hidden');
 
+                // ==========================================
+                // 1. 价格计算详情表 (汇总计算逻辑)
+                // ==========================================
+                const summaryMap = {};
+                let grandTotalCount = 0;
+                let grandTotalValue = 0;
+
+                data.forEach(row => {
+                    let name = row['资源名称'] || '未命名资源';
+                    let quality = row['_parsedQuality'] || '未分类';
+                    let resourceType = row['_resourceType'] || '-'; // 新增资源类型变量提取
+                    
+                    // 使用 资源名称 + 资源品质 + 资源类型 作为唯一标识进行精确聚合
+                    let key = name + '|' + quality + '|' + resourceType;
+
+                    if (!summaryMap[key]) {
+                        summaryMap[key] = {
+                            name: name,
+                            quality: quality,
+                            resourceType: resourceType, // 保存分类
+                            unitValue: row._unitValue || 0,
+                            totalCount: 0,
+                            totalValue: 0
+                        };
+                    }
+                    summaryMap[key].totalCount += row._count;
+                    summaryMap[key].totalValue += row._totalValue;
+                    
+                    grandTotalCount += row._count;
+                    grandTotalValue += row._totalValue;
+                });
+
+                // 按资源品质排序 (最高品质在最前，同品质按名称排序)
+                const sortedSummary = Object.values(summaryMap).sort((a, b) => {
+                    const rankA = getQualityLegendRank(a.quality);
+                    const rankB = getQualityLegendRank(b.quality);
+                    if (rankA !== rankB) {
+                        return rankA - rankB; 
+                    }
+                    return a.name.localeCompare(b.name); 
+                });
+
+                sortedSummary.forEach((item, idx) => {
+                    currentSummaryDataForExport.push({
+                        '资源名称': item.name,
+                        '资源类型': item.resourceType, // 写入导出数组
+                        '资源品质': item.quality,
+                        '投放总数量': item.totalCount,
+                        '单价 (价值)': item.unitValue,
+                        '总价值合计': item.totalValue
+                    });
+
+                    let tr = document.createElement('tr');
+                    tr.className = idx % 2 === 0 ? "bg-white hover:bg-green-50 transition-colors" : "bg-gray-50 hover:bg-green-50 transition-colors";
+                    
+                    let qColor = getColorForQuality(item.quality);
+                    let qLabel = `<span class="px-2 py-1 rounded text-xs font-semibold" style="background-color:${qColor}20; color:${qColor}; border: 1px solid ${qColor}40;">${item.quality}</span>`;
+
+                    // 新增 资源类型 列渲染
+                    tr.innerHTML = `
+                        <td class="px-4 py-3 text-gray-800 font-medium">${item.name}</td>
+                        <td class="px-4 py-3 text-gray-600">${item.resourceType}</td>
+                        <td class="px-4 py-3">${qLabel}</td>
+                        <td class="px-4 py-3 text-right font-semibold text-gray-800">${item.totalCount.toLocaleString()}</td>
+                        <td class="px-4 py-3 text-right text-gray-500">${item.unitValue.toLocaleString()}</td>
+                        <td class="px-4 py-3 text-right font-bold text-green-600">${item.totalValue.toLocaleString()}</td>
+                    `;
+                    sumTbody.appendChild(tr);
+                });
+
+                currentSummaryDataForExport.push({
+                    '资源名称': '当前选中数据合计',
+                    '资源类型': '-',
+                    '资源品质': '-',
+                    '投放总数量': grandTotalCount,
+                    '单价 (价值)': '-',
+                    '总价值合计': grandTotalValue
+                });
+
+                // colspan 调整为 3 以对齐新增的列
+                sumTfoot.innerHTML = `
+                    <tr>
+                        <td class="px-4 py-3 text-gray-800 text-right" colspan="3">当前选中数据合计：</td>
+                        <td class="px-4 py-3 text-right text-blue-700 text-lg">${grandTotalCount.toLocaleString()}</td>
+                        <td class="px-4 py-3 text-right text-gray-500">-</td>
+                        <td class="px-4 py-3 text-right text-red-600 text-lg">${grandTotalValue.toLocaleString()}</td>
+                    </tr>
+                `;
+
+
+                // ==========================================
+                // 2. 底层数据关联明细表渲染
+                // ==========================================
                 const keys = Object.keys(data[0]).filter(k => !k.startsWith('_'));
 
                 let trHead = document.createElement('tr');
                 keys.forEach(k => {
                     let th = document.createElement('th');
-                    th.className = "px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap";
+                    th.className = "px-4 py-3 text-left text-xs font-semibold text-blue-800 uppercase tracking-wider whitespace-nowrap";
                     th.textContent = k;
                     trHead.appendChild(th);
                 });
@@ -665,6 +841,14 @@
         const getIncrement = (item) => currentDisplayMetric === 'count' ? item._count : item._totalValue;
         const getYAxisName = () => currentDisplayMetric === 'count' ? '总投放量 (个数)' : '总投放价值';
 
+        // 💡 新增：智能缩短超长数字格式（防重叠），例如 120000 -> 12万
+        function formatLabelValue(v) {
+            if (!v || v <= 0) return '';
+            if (v >= 100000000) return parseFloat((v / 100000000).toFixed(2)) + '亿';
+            if (v >= 10000) return parseFloat((v / 10000).toFixed(1)) + '万';
+            return v.toLocaleString();
+        }
+
         function renderQualityYearly(data) {
             let agg = {'2024':{}, '2025':{}, '2026':{}};
             let qualitySet = new Set();
@@ -690,12 +874,19 @@
             if (seriesData.length > 0) {
                 const totals = seriesData[0].data.map((_, idx) => seriesData.reduce((sum, series) => sum + (series.data[idx] || 0), 0));
                 seriesData.push({
-                    name: '总计', type: 'bar', stack: 'total', 
-                    tooltip: { show: false },
-                    silent: true, 
-                    label: { show: true, position: 'top', formatter: p => totals[p.dataIndex] > 0 ? totals[p.dataIndex].toLocaleString() : '', color: '#333', fontWeight: 'bold' },
+                    name: '总计', type: 'bar', 
+                    barGap: '-100%', 
+                    z: 1,            
+                    tooltip: { 
+                        formatter: p => {
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.name}<br/>${p.marker} <b>该列${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
+                    label: { show: true, position: 'top', formatter: p => formatLabelValue(totals[p.dataIndex]), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
-                    data: totals.map(() => 0)
+                    data: totals
                 });
             }
 
@@ -735,12 +926,19 @@
             if (seriesData.length > 0) {
                 const totals = seriesData[0].data.map((_, idx) => seriesData.reduce((sum, series) => sum + (series.data[idx] || 0), 0));
                 seriesData.push({
-                    name: '总计', type: 'bar', stack: 'total', 
-                    tooltip: { show: false },
-                    silent: true, 
-                    label: { show: true, position: 'top', formatter: p => totals[p.dataIndex] > 0 ? totals[p.dataIndex].toLocaleString() : '', color: '#333', fontWeight: 'bold' },
+                    name: '总计', type: 'bar', 
+                    barGap: '-100%', 
+                    z: 1,
+                    tooltip: { 
+                        formatter: p => {
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.name}<br/>${p.marker} <b>该列${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
+                    label: { show: true, position: 'top', formatter: p => formatLabelValue(totals[p.dataIndex]), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
-                    data: totals.map(() => 0)
+                    data: totals
                 });
             }
 
@@ -780,32 +978,49 @@
             if (seriesData.length > 0) {
                 const totals = seriesData[0].data.map((_, idx) => seriesData.reduce((sum, series) => sum + (series.data[idx] || 0), 0));
                 seriesData.push({
-                    name: '总计', type: 'bar', stack: 'Total', 
-                    tooltip: { show: false },
-                    silent: true, 
-                    label: { show: true, position: 'top', formatter: p => totals[p.dataIndex] > 0 ? totals[p.dataIndex].toLocaleString() : '', color: '#333', fontWeight: 'bold' },
+                    name: '总计', type: 'bar', 
+                    barGap: '-100%', 
+                    z: 1, 
+                    tooltip: { 
+                        formatter: p => {
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.name}<br/>${p.marker} <b>该列${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
+                    label: { 
+                        show: true, 
+                        position: 'top', 
+                        rotate: 45, 
+                        align: 'left', 
+                        verticalAlign: 'bottom', 
+                        distance: 5, 
+                        fontSize: 10, 
+                        hideOverlap: true,
+                        formatter: p => formatLabelValue(totals[p.dataIndex]), 
+                        color: '#333', 
+                        fontWeight: 'bold' 
+                    },
                     itemStyle: { color: 'transparent' },
-                    data: totals.map(() => 0)
+                    data: totals
                 });
             }
 
             charts.qualityMonthly.setOption({
                 tooltip: { trigger: 'item', axisPointer: { type: 'shadow' } },
                 legend: { type: 'scroll', data: legendQualities, bottom: 0 },
-                grid: { left: '3%', right: '4%', bottom: '15%', containLabel: true },
+                grid: { top: 70, left: '3%', right: '4%', bottom: '15%', containLabel: true },
                 xAxis: { type: 'category', data: monthlyTimeline },
                 yAxis: { type: 'value', name: getYAxisName() },
                 series: seriesData
             }, true);
         }
 
-        // --- 全新 1.4 板块：节点统计分析逻辑 ---
         function renderQualityNode(data) {
             let agg = {};
-            let nodeStartDates = {}; // 用于记录每个节点的最早触发日期
+            let nodeStartDates = {}; 
             let qualitySet = new Set();
             
-            // 只保留具有明确“节点”名称的数据进行专项分析
             const validData = data.filter(item => item._parsedNode && item._parsedNode !== '');
 
             validData.forEach(item => {
@@ -815,13 +1030,11 @@
                 if (!agg[node]) agg[node] = {};
                 agg[node][item._parsedQuality] = (agg[node][item._parsedQuality] || 0) + getIncrement(item);
                 
-                // 自动抓取该节点内最早出现的活动时间
                 if (!nodeStartDates[node] || item._startDateObj < nodeStartDates[node]) {
                     nodeStartDates[node] = item._startDateObj;
                 }
             });
 
-            // 核心排序：根据所有节点的首个活动上线日期的时间戳，从早到晚进行时序排列
             const sortedNodes = Object.keys(nodeStartDates).sort((a, b) => nodeStartDates[a] - nodeStartDates[b]);
 
             const stackQualities = Array.from(qualitySet).sort((a, b) => (getQualityStackRank(a) - getQualityStackRank(b)) || a.localeCompare(b));
@@ -834,24 +1047,42 @@
                 data: sortedNodes.map(node => agg[node][q] || 0)
             }));
 
-            // --- 追加总计标签 ---
+            // 💡 新增：节点图也应用倾斜数字与转换
             if (seriesData.length > 0) {
                 const totals = seriesData[0].data.map((_, idx) => seriesData.reduce((sum, series) => sum + (series.data[idx] || 0), 0));
                 seriesData.push({
-                    name: '总计', type: 'bar', stack: 'Total', 
-                    tooltip: { show: false },
-                    silent: true, 
-                    label: { show: true, position: 'top', formatter: p => totals[p.dataIndex] > 0 ? totals[p.dataIndex].toLocaleString() : '', color: '#333', fontWeight: 'bold' },
+                    name: '总计', type: 'bar', 
+                    barGap: '-100%', 
+                    z: 1, 
+                    tooltip: { 
+                        formatter: p => {
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.name}<br/>${p.marker} <b>节点${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
+                    label: { 
+                        show: true, 
+                        position: 'top', 
+                        rotate: 45, 
+                        align: 'left', 
+                        verticalAlign: 'bottom', 
+                        distance: 5, 
+                        fontSize: 10, 
+                        hideOverlap: true,
+                        formatter: p => formatLabelValue(totals[p.dataIndex]), 
+                        color: '#333', 
+                        fontWeight: 'bold' 
+                    },
                     itemStyle: { color: 'transparent' },
-                    data: totals.map(() => 0)
+                    data: totals
                 });
             }
 
             charts.qualityNode.setOption({
                 tooltip: { trigger: 'item', axisPointer: { type: 'shadow' } },
                 legend: { type: 'scroll', data: legendQualities, bottom: 0 },
-                grid: { left: '3%', right: '4%', bottom: '25%', containLabel: true },
-                // X轴文字若过长，自动倾斜30度防止重叠
+                grid: { top: 70, left: '3%', right: '4%', bottom: '25%', containLabel: true },
                 xAxis: { type: 'category', data: sortedNodes, axisLabel: { interval: 0, rotate: 30, fontSize: 11 } },
                 yAxis: { type: 'value', name: getYAxisName() },
                 series: seriesData
@@ -897,13 +1128,26 @@
             if (seriesData.length > 0) {
                 const getVal = (v) => (typeof v === 'object' && v !== null) ? (v.value || 0) : (v || 0);
                 const totals = seriesData[0].data.map((_, idx) => seriesData.reduce((sum, series) => sum + getVal(series.data[idx]), 0));
+                
+                const totalsData = periodsMap.map((info, idx) => {
+                    if (!info) return { value: 0 };
+                    return { value: totals[idx], _year: info.y, _period: info.p, _nDays: info.d };
+                });
+
                 seriesData.push({
-                    name: '总计', type: 'bar', stack: 'total', 
-                    tooltip: { show: false },
-                    silent: true, 
-                    label: { show: true, position: 'top', formatter: p => totals[p.dataIndex] > 0 ? totals[p.dataIndex].toLocaleString() : '', color: '#333', fontWeight: 'bold' },
+                    name: '总计', type: 'bar', 
+                    barGap: '-100%', barMaxWidth: 50, z: 1, 
+                    tooltip: { 
+                        formatter: p => {
+                            if(!p.data || !p.data._year) return '';
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.data._year}年 ${p.data._period} (${p.data._nDays}天)<br/>${p.marker} <b>列合计 ${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看整列全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
+                    label: { show: true, position: 'top', formatter: p => formatLabelValue(p.value), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
-                    data: totals.map(() => 0)
+                    data: totalsData
                 });
             }
 
@@ -912,6 +1156,7 @@
                     trigger: 'item', axisPointer: { type: 'shadow' },
                     formatter: function(params) {
                         if(!params.data || !params.data._year) return '';
+                        if(params.seriesName === '总计') return params.data._customTooltip || params.data._period; 
                         let metricLabel = currentDisplayMetric === 'count' ? '数量' : '总价值';
                         return `${params.data._year}年 ${params.data._period} (${params.data._nDays}天)<br/>${params.marker} ${params.seriesName} - ${metricLabel}: ${params.value.toLocaleString()}`;
                     }
@@ -970,13 +1215,26 @@
             if (seriesData.length > 0) {
                 const getVal = (v) => (typeof v === 'object' && v !== null) ? (v.value || 0) : (v || 0);
                 const totals = seriesData[0].data.map((_, idx) => seriesData.reduce((sum, series) => sum + getVal(series.data[idx]), 0));
+                
+                const totalsData = periodsMap.map((info, idx) => {
+                    if (!info) return { value: 0 };
+                    return { value: totals[idx], _year: info.y, _period: info.p, _customName: info.label };
+                });
+
                 seriesData.push({
-                    name: '总计', type: 'bar', stack: 'total', 
-                    tooltip: { show: false },
-                    silent: true, 
-                    label: { show: true, position: 'top', formatter: p => totals[p.dataIndex] > 0 ? totals[p.dataIndex].toLocaleString() : '', color: '#333', fontWeight: 'bold' },
+                    name: '总计', type: 'bar', 
+                    barGap: '-100%', barMaxWidth: 50, z: 1, 
+                    tooltip: { 
+                        formatter: p => {
+                            if(!p.data || !p.data._year) return '';
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.data._year}年 ${p.data._customName}<br/>${p.marker} <b>列合计 ${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看整列全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
+                    label: { show: true, position: 'top', formatter: p => formatLabelValue(p.value), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
-                    data: totals.map(() => 0)
+                    data: totalsData
                 });
             }
 
@@ -985,6 +1243,7 @@
                     trigger: 'item', axisPointer: { type: 'shadow' },
                     formatter: function(params) {
                         if(!params.data || !params.data._year) return '';
+                        if(params.seriesName === '总计') return ''; 
                         let metricLabel = currentDisplayMetric === 'count' ? '数量' : '总价值';
                         return `${params.data._year}年 ${params.data._customName}<br/>${params.marker} ${params.seriesName} - ${metricLabel}: ${params.value.toLocaleString()}`;
                     }
@@ -1013,7 +1272,6 @@
                     if(RAMADAN_DATES[y].start.getMonth() + 1 === m || RAMADAN_DATES[y].end.getMonth() + 1 === m) multiplier += 2;
                     let rows = Math.floor(Math.random() * 10 * multiplier) + 5;
                     
-                    // 为了测试 1.4 图表节点的时序能力，按照月份随机生成固定节点名
                     let mockNodeName = '';
                     if (m === 1 || m === 2) mockNodeName = y + '年 春节/情人节大推';
                     else if (m === 4 || m === 5) mockNodeName = y + '年 初夏派对版本';
@@ -1026,10 +1284,10 @@
                         let dateStr = `${y}/${m.toString().padStart(2, '0')}/${d.toString().padStart(2, '0')}`;
                         data.push({
                             '备用字段': '备用',
-                            '节点': mockNodeName, // 赋给节点以供排序测试
+                            '节点': mockNodeName, 
                             '数量': Math.floor(Math.random() * 20) + 1,
                             '行为': '登录',
-                            '资源名称': '模拟资源',
+                            '资源名称': '模拟核心武器',
                             '资源品质': qualities[Math.floor(Math.random() * qualities.length)],
                             '活动类型': '活跃',
                             '活动上线日期': dateStr,
