@@ -24,12 +24,11 @@
 </head>
 <body class="text-gray-800 relative">
 
-    <!-- 顶部导航与操作区 (悬浮置顶) -->
     <header class="bg-white shadow-md sticky top-0 z-40 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center border-b border-gray-100">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">📦 2024-2026 资源投放趋势分析</h1>
-                <p class="text-sm text-gray-500 mt-1" id="data-status">当前状态：正在使用内置模拟数据展示</p>
+                <p class="text-sm text-gray-500 mt-1" id="data-status">当前状态：准备加载数据...</p>
             </div>
             <div>
                 <label for="csv-upload" class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md shadow transition-colors text-sm font-medium">
@@ -40,10 +39,8 @@
             </div>
         </div>
         
-        <!-- 全局资源类型、价值高低及指标双重筛选区 -->
         <div class="bg-gray-50 border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-3">
-                <!-- 统计指标切换 -->
                 <div class="flex items-center gap-4 flex-wrap">
                     <span class="font-bold text-gray-700 flex items-center w-48">
                         <svg class="w-5 h-5 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -65,7 +62,6 @@
                     </div>
                 </div>
 
-                <!-- 资源类型筛选 -->
                 <div class="flex items-center gap-4 flex-wrap mt-1">
                     <span class="font-bold text-gray-700 flex items-center w-48">
                         <svg class="w-5 h-5 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 00-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
@@ -77,11 +73,9 @@
                     </label>
                     <div class="h-5 w-px bg-gray-300 mx-1"></div>
                     <div id="filter-options" class="flex items-center gap-3 flex-wrap">
-                        <!-- 动态生成的筛选框 -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- 价值高低筛选 -->
                 <div class="flex items-center gap-4 flex-wrap">
                     <span class="font-bold text-gray-700 flex items-center w-48">
                         <svg class="w-5 h-5 mr-1 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
@@ -93,21 +87,18 @@
                     </label>
                     <div class="h-5 w-px bg-gray-300 mx-1"></div>
                     <div id="filter-options-value" class="flex items-center gap-3 flex-wrap">
-                        <!-- 动态生成的筛选框 -->
-                    </div>
+                        </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- 主体内容 -->
     <main class="max-w-7xl mx-auto px-4 py-8">
         
         <div class="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 text-sm text-blue-800 flex justify-between items-center shadow-sm">
-            <span><strong>💡 操作提示升级：</strong> 点击下方任意 <b>单色柱状图区块</b>，可查看该品质单一明细；点击 <b>柱顶层悬浮的总计数字</b>（或柱体虚空处），即可获取该列<b>全部品类</b>的汇总与源数据详情。</span>
+            <span><strong>💡 操作提示：</strong> 点击下方任意 <b>单色柱状图区块</b>，可查看该分类标签下的单一数据明细。</span>
         </div>
 
-        <!-- 模块一：资源品质分析 -->
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-bold border-l-4 border-blue-500 pl-3">模块一：不同【资源品质】的投放趋势</h2>
         </div>
@@ -128,7 +119,6 @@
                 <p class="text-xs text-gray-500 mb-4">目标：观察各品质资源的产出厚度及波峰（受顶部全局筛选器控制，截断至2026年4月）。</p>
                 <div id="chart-quality-monthly" class="chart-container"></div>
             </div>
-            <!-- 新增板块：节点统计分析 -->
             <div class="card lg:col-span-2">
                 <h3 class="text-lg font-semibold mb-2">1.4 节点各品质总投放量对比（堆叠柱状图）</h3>
                 <p class="text-xs text-gray-500 mb-4">目标：按照源数据表中的【节点】字段，观察各大运营节点的资源投放力度。（横轴节点已按<b>该节点内最早活动上线日期</b>由左至右时序排列。空节点已被过滤。受全局筛选控制）</p>
@@ -136,7 +126,6 @@
             </div>
         </div>
 
-        <!-- 模块二：特定节点（斋月）分析 -->
         <h2 class="text-xl font-bold mb-4 mt-8 border-l-4 border-purple-500 pl-3">模块二：特定节点（斋月）资源投放生态震荡分析</h2>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -153,7 +142,6 @@
         </div>
     </main>
 
-    <!-- 🌟 悬浮模态弹窗版数据详情表 🌟 -->
     <div id="detail-modal" class="hidden fixed inset-0 z-[100] bg-gray-900 bg-opacity-60 backdrop-blur-sm flex justify-center items-center p-4 sm:p-6 opacity-0 transition-opacity duration-300" onclick="handleBackdropClick(event)">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-7xl max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300" id="detail-modal-content">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-xl shrink-0">
@@ -170,11 +158,9 @@
             </div>
             
             <div class="p-6 overflow-auto flex-1 custom-scrollbar bg-white" id="modal-tables-container">
-                <!-- 价格计算汇总表 -->
                 <div class="mb-10 relative">
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="text-base font-bold text-gray-800 border-l-4 border-green-500 pl-3">所选物品价格计算详情</h4>
-                        <!-- 新增：导出 CSV 按钮 -->
                         <button onclick="exportSummaryCSV()" class="flex items-center px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border border-green-200 rounded-md text-sm font-semibold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             一键导出汇总 CSV
@@ -198,7 +184,6 @@
                     </div>
                 </div>
 
-                <!-- 原始底层明细表 -->
                 <div>
                     <h4 class="text-base font-bold text-gray-800 mb-3 border-l-4 border-blue-500 pl-3">底层数据关联明细</h4>
                     <div class="overflow-hidden border border-gray-200 rounded-lg">
@@ -552,7 +537,6 @@
             bindChartClickEvents();
         }
 
-        // --- 🎯 全新升级：整列穿透点击与反查逻辑 ---
         function handleChartClick(chartKey, params) {
             let filteredData = [];
             let clickTitle = "";
@@ -712,16 +696,15 @@
                 data.forEach(row => {
                     let name = row['资源名称'] || '未命名资源';
                     let quality = row['_parsedQuality'] || '未分类';
-                    let resourceType = row['_resourceType'] || '-'; // 新增资源类型变量提取
+                    let resourceType = row['_resourceType'] || '-'; 
                     
-                    // 使用 资源名称 + 资源品质 + 资源类型 作为唯一标识进行精确聚合
                     let key = name + '|' + quality + '|' + resourceType;
 
                     if (!summaryMap[key]) {
                         summaryMap[key] = {
                             name: name,
                             quality: quality,
-                            resourceType: resourceType, // 保存分类
+                            resourceType: resourceType, 
                             unitValue: row._unitValue || 0,
                             totalCount: 0,
                             totalValue: 0
@@ -734,7 +717,6 @@
                     grandTotalValue += row._totalValue;
                 });
 
-                // 按资源品质排序 (最高品质在最前，同品质按名称排序)
                 const sortedSummary = Object.values(summaryMap).sort((a, b) => {
                     const rankA = getQualityLegendRank(a.quality);
                     const rankB = getQualityLegendRank(b.quality);
@@ -747,7 +729,7 @@
                 sortedSummary.forEach((item, idx) => {
                     currentSummaryDataForExport.push({
                         '资源名称': item.name,
-                        '资源类型': item.resourceType, // 写入导出数组
+                        '资源类型': item.resourceType, 
                         '资源品质': item.quality,
                         '投放总数量': item.totalCount,
                         '单价 (价值)': item.unitValue,
@@ -760,7 +742,6 @@
                     let qColor = getColorForQuality(item.quality);
                     let qLabel = `<span class="px-2 py-1 rounded text-xs font-semibold" style="background-color:${qColor}20; color:${qColor}; border: 1px solid ${qColor}40;">${item.quality}</span>`;
 
-                    // 新增 资源类型 列渲染
                     tr.innerHTML = `
                         <td class="px-4 py-3 text-gray-800 font-medium">${item.name}</td>
                         <td class="px-4 py-3 text-gray-600">${item.resourceType}</td>
@@ -781,7 +762,6 @@
                     '总价值合计': grandTotalValue
                 });
 
-                // colspan 调整为 3 以对齐新增的列
                 sumTfoot.innerHTML = `
                     <tr>
                         <td class="px-4 py-3 text-gray-800 text-right" colspan="3">当前选中数据合计：</td>
@@ -790,7 +770,6 @@
                         <td class="px-4 py-3 text-right text-red-600 text-lg">${grandTotalValue.toLocaleString()}</td>
                     </tr>
                 `;
-
 
                 // ==========================================
                 // 2. 底层数据关联明细表渲染
@@ -841,7 +820,6 @@
         const getIncrement = (item) => currentDisplayMetric === 'count' ? item._count : item._totalValue;
         const getYAxisName = () => currentDisplayMetric === 'count' ? '总投放量 (个数)' : '总投放价值';
 
-        // 💡 新增：智能缩短超长数字格式（防重叠），例如 120000 -> 12万
         function formatLabelValue(v) {
             if (!v || v <= 0) return '';
             if (v >= 100000000) return parseFloat((v / 100000000).toFixed(2)) + '亿';
@@ -877,13 +855,7 @@
                     name: '总计', type: 'bar', 
                     barGap: '-100%', 
                     z: 1,            
-                    tooltip: { 
-                        formatter: p => {
-                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
-                            return `${p.name}<br/>${p.marker} <b>该列${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
-                        }
-                    },
-                    silent: false, 
+                    silent: true, 
                     label: { show: true, position: 'top', formatter: p => formatLabelValue(totals[p.dataIndex]), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
                     data: totals
@@ -929,13 +901,7 @@
                     name: '总计', type: 'bar', 
                     barGap: '-100%', 
                     z: 1,
-                    tooltip: { 
-                        formatter: p => {
-                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
-                            return `${p.name}<br/>${p.marker} <b>该列${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
-                        }
-                    },
-                    silent: false, 
+                    silent: true, 
                     label: { show: true, position: 'top', formatter: p => formatLabelValue(totals[p.dataIndex]), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
                     data: totals
@@ -981,13 +947,7 @@
                     name: '总计', type: 'bar', 
                     barGap: '-100%', 
                     z: 1, 
-                    tooltip: { 
-                        formatter: p => {
-                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
-                            return `${p.name}<br/>${p.marker} <b>该列${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
-                        }
-                    },
-                    silent: false, 
+                    silent: true, 
                     label: { 
                         show: true, 
                         position: 'top', 
@@ -1047,20 +1007,13 @@
                 data: sortedNodes.map(node => agg[node][q] || 0)
             }));
 
-            // 💡 新增：节点图也应用倾斜数字与转换
             if (seriesData.length > 0) {
                 const totals = seriesData[0].data.map((_, idx) => seriesData.reduce((sum, series) => sum + (series.data[idx] || 0), 0));
                 seriesData.push({
                     name: '总计', type: 'bar', 
                     barGap: '-100%', 
                     z: 1, 
-                    tooltip: { 
-                        formatter: p => {
-                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
-                            return `${p.name}<br/>${p.marker} <b>节点${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
-                        }
-                    },
-                    silent: false, 
+                    silent: true, 
                     label: { 
                         show: true, 
                         position: 'top', 
@@ -1137,14 +1090,7 @@
                 seriesData.push({
                     name: '总计', type: 'bar', 
                     barGap: '-100%', barMaxWidth: 50, z: 1, 
-                    tooltip: { 
-                        formatter: p => {
-                            if(!p.data || !p.data._year) return '';
-                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
-                            return `${p.data._year}年 ${p.data._period} (${p.data._nDays}天)<br/>${p.marker} <b>列合计 ${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看整列全品类明细)</span>`;
-                        }
-                    },
-                    silent: false, 
+                    silent: true, 
                     label: { show: true, position: 'top', formatter: p => formatLabelValue(p.value), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
                     data: totalsData
@@ -1224,14 +1170,7 @@
                 seriesData.push({
                     name: '总计', type: 'bar', 
                     barGap: '-100%', barMaxWidth: 50, z: 1, 
-                    tooltip: { 
-                        formatter: p => {
-                            if(!p.data || !p.data._year) return '';
-                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
-                            return `${p.data._year}年 ${p.data._customName}<br/>${p.marker} <b>列合计 ${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看整列全品类明细)</span>`;
-                        }
-                    },
-                    silent: false, 
+                    silent: true, 
                     label: { show: true, position: 'top', formatter: p => formatLabelValue(p.value), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
                     data: totalsData
@@ -1333,11 +1272,50 @@
             });
         }
 
+        // ==========================================
+        // 自动读取同级目录 CSV 文件的逻辑
+        // ==========================================
+        
+        // 💡 配置你放在 GitHub 同目录下的 CSV 文件名
+        const DEFAULT_CSV_FILENAME = './data.csv'; 
+
         window.onload = () => {
+            // 页面加载时，优先尝试自动读取同级目录下的 CSV
+            autoLoadCSV(DEFAULT_CSV_FILENAME);
+        };
+
+        function autoLoadCSV(csvPath) {
+            document.getElementById('data-status').innerHTML = `<span class="text-blue-600 font-bold">正在尝试自动加载同目录下的 ${csvPath}...</span>`;
+
+            Papa.parse(csvPath, {
+                download: true, // 开启下载远端/同级目录文件模式
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const parsedData = results.data;
+                    // 判断是否成功读取到了有效数据
+                    if (parsedData && parsedData.length > 0) {
+                        document.getElementById('data-status').innerHTML = `<span class="text-green-600 font-bold">已成功自动加载数据源 ${csvPath} (${parsedData.length} 行)！</span>`;
+                        globalRawAndProcessedData = processData(parsedData);
+                        renderFiltersUI(); 
+                    } else {
+                        fallbackToMockData("文件内容为空或格式错误");
+                    }
+                },
+                error: function(err) {
+                    console.warn('自动读取 CSV 失败，将回退使用内置模拟数据。原因:', err);
+                    fallbackToMockData("未找到指定的 CSV 文件");
+                }
+            });
+        }
+
+        // 容错机制：当自动加载失败时，使用原本的模拟数据兜底
+        function fallbackToMockData(reason) {
+            document.getElementById('data-status').innerHTML = `<span class="text-yellow-600 font-bold">自动加载 ${DEFAULT_CSV_FILENAME} 失败 (${reason})，当前正在使用内置模拟数据展示</span>`;
             const mockData = generateMockData();
             globalRawAndProcessedData = processData(mockData);
             renderFiltersUI(); 
-        };
+        }
 
     </script>
 </body>
