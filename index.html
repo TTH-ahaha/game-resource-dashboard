@@ -31,10 +31,17 @@
                 <h1 class="text-2xl font-bold text-gray-900">📦 2024-2026 资源投放趋势分析</h1>
                 <p class="text-sm text-gray-500 mt-1" id="data-status">当前状态：正在使用内置模拟数据展示</p>
             </div>
-            <div>
-                <label for="csv-upload" class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md shadow transition-colors text-sm font-medium">
+            <!-- 🌟 全新网络直读与上传模块 🌟 -->
+            <div class="flex items-center gap-2">
+                <input type="text" id="remote-csv-url" placeholder="在此输入 GitHub Raw CSV 链接..." class="text-sm border border-gray-300 rounded-md px-3 py-1.5 w-64 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm">
+                <button onclick="fetchRemoteCSV()" class="bg-purple-600 hover:bg-purple-700 text-white py-1.5 px-3 rounded-md shadow transition-colors text-sm font-medium whitespace-nowrap">
+                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                    一键拉取
+                </button>
+                <span class="text-gray-300 ml-1 mr-1">|</span>
+                <label for="csv-upload" class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-3 rounded-md shadow transition-colors text-sm font-medium whitespace-nowrap mb-0 flex items-center">
                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    上传真实 CSV 盘点表
+                    本地上传
                 </label>
                 <input type="file" id="csv-upload" accept=".csv" class="hidden" onchange="handleFileUpload(event)">
             </div>
@@ -270,44 +277,53 @@
         let currentExportTitle = "";
 
         // -------------------------
-        // 核心视觉与容错排序逻辑
+        // 🌟核心升级：视觉与精准容错排序逻辑
         // -------------------------
         
         function getColorForQuality(qualityName) {
             if (!qualityName) return '#a0a0a0';
             const n = qualityName.toUpperCase();
+            
+            // 🌟 修复：必须先检查 "红" 或 "S+"，避免被普通 "S" 提前拦截
+            if (n.includes('红') || n.includes('S+')) return '#e11d48'; // 强正红色
             if (n.includes('橙') || n.includes('S')) return '#ff7300'; 
             if (n.includes('紫')) return '#8884d8'; 
             if (n.includes('蓝')) return '#4169E1'; 
             if (n.includes('绿')) return '#4caf50'; 
             if (n.includes('金')) return '#ffd700';
-            if (n.includes('红')) return '#f44336';
             if (n.includes('白')) return '#d9d9d9';
+            
             const defaultColors = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
             let hash = 0;
             for (let i = 0; i < qualityName.length; i++) hash = qualityName.charCodeAt(i) + ((hash << 5) - hash);
             return defaultColors[Math.abs(hash) % defaultColors.length];
         }
 
+        // 柱形图堆叠顺序 (越小越在下面，绿品强制在最上层)
         function getQualityStackRank(qualityName) {
             if (!qualityName) return 50;
             const n = qualityName.toUpperCase();
-            if (n.includes('橙') || n.includes('S')) return 1;    
-            if (n.includes('紫') || n.includes('A+')) return 2;   
-            if (n.includes('金')) return 3;
-            if (n.includes('蓝') || n.includes('A')) return 4;
+            
+            if (n.includes('红') || n.includes('S+')) return 1;    
+            if (n.includes('橙') || n.includes('S')) return 2;    
+            if (n.includes('紫') || n.includes('A+')) return 3;   
+            if (n.includes('金')) return 4;
+            if (n.includes('蓝') || n.includes('A')) return 5;
             if (n.includes('绿')) return 100; 
             return 50; 
         }
 
+        // 图例与明细表顺序 (越小越在左侧/上侧)
         function getQualityLegendRank(qualityName) {
             if (!qualityName) return 100;
             const n = qualityName.toUpperCase();
-            if (n.includes('橙') || n.includes('S')) return 1;    
-            if (n.includes('紫') || n.includes('A+')) return 2;   
-            if (n.includes('金')) return 3;
-            if (n.includes('蓝') || n.includes('A')) return 4;
-            if (n.includes('绿')) return 5;                     
+            
+            if (n.includes('红') || n.includes('S+')) return 1;    
+            if (n.includes('橙') || n.includes('S')) return 2;    
+            if (n.includes('紫') || n.includes('A+')) return 3;   
+            if (n.includes('金')) return 4;
+            if (n.includes('蓝') || n.includes('A')) return 5;
+            if (n.includes('绿')) return 6;                     
             return 100; 
         }
 
@@ -401,9 +417,11 @@
                 let rawNode = row['节点'] ? row['节点'].trim() : ''; 
                 let rawEventType = row['活动类型'] ? row['活动类型'].trim() : ''; 
                 
-                // 🌟 数据清洗：严格过滤空值和未知标签（不统计、不展示）
+                // 🌟 数据清洗引擎更新：严格拦截未知分类和空项！
                 if (!rawQuality || rawQuality === '未分类') return;
                 if (!rawValue || rawValue === '未分类') return;
+                
+                // 不合规活动类型或资源类型一律不加入底层大盘
                 if (!resourceType || resourceType === '未分类' || resourceType === '未知类型') return;
                 if (!rawEventType || rawEventType === '未分类' || rawEventType === '未知活动类型') return;
 
@@ -609,6 +627,7 @@
         }
 
         function applyFilterAndRender() {
+            // 加入三重维度严格校验
             currentFilteredData = globalRawAndProcessedData.filter(d => 
                 selectedResourceTypes.has(d._resourceType) && 
                 selectedValueLevels.has(d._parsedValue) &&
@@ -1336,10 +1355,9 @@
         // --- 模拟数据生成 与 文件上传解析 ---
         function generateMockData() {
             const data = [];
-            const qualities = ['蓝品（A/B）', '橙品（S/SP）', '紫品（A+）', '绿品（C）', '其他'];
+            const qualities = ['红品（S+）', '橙品（S/SP）', '紫品（A+）', '蓝品（A/B）', '绿品（C）'];
             const values = ['局内--高价值外显资源', '局内中低价值外显资源', '局外社交外显资源', '抽奖券类资源', '盲盒类资源'];
             
-            // 🌟 严格限制模拟数据的枚举值，防止污染 UI
             const resTypes = ['永久', '限时']; 
             const eventTypes = ['活跃', '付费']; 
             
@@ -1391,17 +1409,53 @@
             return data;
         }
 
+        // 🌟 新增：在线拉取 GitHub Raw 逻辑
+        function fetchRemoteCSV() {
+            const urlInput = document.getElementById('remote-csv-url').value.trim();
+            if (!urlInput) {
+                alert("请输入有效的 GitHub Raw CSV 文件链接！");
+                return;
+            }
+            loadFromUrl(urlInput);
+        }
+
+        function loadFromUrl(url) {
+            document.getElementById('data-status').innerHTML = `<span class="text-blue-600 font-bold">正在拉取在线数据: ${url}...</span>`;
+            
+            Papa.parse(url, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const parsedData = results.data;
+                    if(parsedData && parsedData.length > 0 && Object.keys(parsedData[0]).length > 1) {
+                        document.getElementById('data-status').innerHTML = `<span class="text-green-600 font-bold">已成功加载线上真实数据 (${parsedData.length} 行) 并重绘图表！</span>`;
+                        hideDetailTable();
+                        globalRawAndProcessedData = processData(parsedData);
+                        renderFiltersUI();
+                    } else {
+                        document.getElementById('data-status').innerHTML = `<span class="text-red-500 font-bold">在线文件为空或格式不匹配！</span>`;
+                    }
+                },
+                error: function(err) {
+                    console.error("加载远端 CSV 失败:", err);
+                    document.getElementById('data-status').innerHTML = `<span class="text-red-500 font-bold">文件拉取失败！如果这是本地双击打开的文件，浏览器可能会拦截自动拉取。</span>`;
+                    alert('获取失败：请确认您的链接是直读的 Raw 格式，且网络/跨域策略允许访问！');
+                }
+            });
+        }
+
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            document.getElementById('data-status').innerHTML = `<span class="text-blue-600 font-bold">正在解析 ${file.name}...</span>`;
+            document.getElementById('data-status').innerHTML = `<span class="text-blue-600 font-bold">正在解析本地文件 ${file.name}...</span>`;
 
             Papa.parse(file, {
                 header: true, skipEmptyLines: true,
                 complete: function(results) {
                     const parsedData = results.data;
-                    document.getElementById('data-status').innerHTML = `<span class="text-green-600 font-bold">已成功加载真实数据 (${parsedData.length} 行) 并重绘图表！</span>`;
+                    document.getElementById('data-status').innerHTML = `<span class="text-green-600 font-bold">已成功加载本地真实数据 (${parsedData.length} 行) 并重绘图表！</span>`;
                     
                     hideDetailTable();
                     globalRawAndProcessedData = processData(parsedData);
@@ -1414,11 +1468,41 @@
             });
         }
 
+        // 🌟 核心升级：页面自动初始化逻辑
         window.onload = () => {
+            // 尝试自动读取同级目录下的 data.csv
+            // ⚠️如果您将 dashboard.html 部署在 GitHub Pages，它将自动读取成功！
+            // 但如果您是在自己电脑双击打开 HTML (file://协议)，则会因浏览器CORS跨域被拦截并回退模拟数据。
+            const defaultUrl = 'data.csv'; 
+            
+            document.getElementById('data-status').innerHTML = `<span class="text-blue-600 font-bold">尝试自动感知并加载 ${defaultUrl}...</span>`;
+            
+            Papa.parse(defaultUrl, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data && results.data.length > 0 && Object.keys(results.data[0]).length > 1) {
+                        document.getElementById('data-status').innerHTML = `<span class="text-green-600 font-bold">已自动捕获并加载真实数据 (${results.data.length} 行)！</span>`;
+                        globalRawAndProcessedData = processData(results.data);
+                        renderFiltersUI();
+                    } else {
+                        useMockFallback("数据为空");
+                    }
+                },
+                error: function(err) {
+                    console.warn("自动拉取同级 data.csv 失败，已回退至模拟数据展示层", err);
+                    useMockFallback("受限的本地环境");
+                }
+            });
+        };
+
+        function useMockFallback(reason) {
+            document.getElementById('data-status').innerHTML = `<span class="text-orange-500 font-bold">当前显示为内置模拟数据 (因为${reason}无法自动拉取 data.csv)。</span>`;
             const mockData = generateMockData();
             globalRawAndProcessedData = processData(mockData);
             renderFiltersUI(); 
-        };
+        }
 
     </script>
 </body>
