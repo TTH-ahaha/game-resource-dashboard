@@ -24,11 +24,12 @@
 </head>
 <body class="text-gray-800 relative">
 
+    <!-- 顶部导航与操作区 (悬浮置顶) -->
     <header class="bg-white shadow-md sticky top-0 z-40 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center border-b border-gray-100">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">📦 2024-2026 资源投放趋势分析</h1>
-                <p class="text-sm text-gray-500 mt-1" id="data-status">当前状态：准备加载数据...</p>
+                <p class="text-sm text-gray-500 mt-1" id="data-status">当前状态：正在使用内置模拟数据展示</p>
             </div>
             <div>
                 <label for="csv-upload" class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md shadow transition-colors text-sm font-medium">
@@ -39,8 +40,10 @@
             </div>
         </div>
         
+        <!-- 全局多维过滤区 -->
         <div class="bg-gray-50 border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-3">
+                <!-- 统计指标切换 -->
                 <div class="flex items-center gap-4 flex-wrap">
                     <span class="font-bold text-gray-700 flex items-center w-48">
                         <svg class="w-5 h-5 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -62,7 +65,24 @@
                     </div>
                 </div>
 
+                <!-- 🌟活动类型筛选 -->
                 <div class="flex items-center gap-4 flex-wrap mt-1">
+                    <span class="font-bold text-gray-700 flex items-center w-48">
+                        <svg class="w-5 h-5 mr-1 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        全局筛选 (活动类型)：
+                    </span>
+                    <label class="inline-flex items-center cursor-pointer bg-white px-3 py-1 rounded-md border border-gray-300 hover:bg-gray-100 shadow-sm transition-colors">
+                        <input type="checkbox" id="filter-all-event" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" checked>
+                        <span class="ml-2 text-sm font-medium text-gray-800">全选</span>
+                    </label>
+                    <div class="h-5 w-px bg-gray-300 mx-1"></div>
+                    <div id="filter-options-event" class="flex items-center gap-3 flex-wrap">
+                        <!-- 动态生成的筛选框 -->
+                    </div>
+                </div>
+
+                <!-- 资源类型筛选 -->
+                <div class="flex items-center gap-4 flex-wrap">
                     <span class="font-bold text-gray-700 flex items-center w-48">
                         <svg class="w-5 h-5 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 00-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                         全局筛选 (资源类型)：
@@ -73,9 +93,11 @@
                     </label>
                     <div class="h-5 w-px bg-gray-300 mx-1"></div>
                     <div id="filter-options" class="flex items-center gap-3 flex-wrap">
-                        </div>
+                        <!-- 动态生成的筛选框 -->
+                    </div>
                 </div>
 
+                <!-- 价值高低筛选 -->
                 <div class="flex items-center gap-4 flex-wrap">
                     <span class="font-bold text-gray-700 flex items-center w-48">
                         <svg class="w-5 h-5 mr-1 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
@@ -87,18 +109,21 @@
                     </label>
                     <div class="h-5 w-px bg-gray-300 mx-1"></div>
                     <div id="filter-options-value" class="flex items-center gap-3 flex-wrap">
-                        </div>
+                        <!-- 动态生成的筛选框 -->
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
+    <!-- 主体内容 -->
     <main class="max-w-7xl mx-auto px-4 py-8">
         
         <div class="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 text-sm text-blue-800 flex justify-between items-center shadow-sm">
-            <span><strong>💡 操作提示：</strong> 点击下方任意 <b>单色柱状图区块</b>，可查看该分类标签下的单一数据明细。</span>
+            <span><strong>💡 操作提示：</strong> 点击下方任意 <b>单色柱状图区块</b>，可查看该品质单一明细；点击 <b>柱顶层悬浮的总计数字</b>（或柱体虚空处），即可获取该列<b>全部品类</b>的汇总与源数据详情。</span>
         </div>
 
+        <!-- 模块一：资源品质分析 -->
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-bold border-l-4 border-blue-500 pl-3">模块一：不同【资源品质】的投放趋势</h2>
         </div>
@@ -119,6 +144,7 @@
                 <p class="text-xs text-gray-500 mb-4">目标：观察各品质资源的产出厚度及波峰（受顶部全局筛选器控制，截断至2026年4月）。</p>
                 <div id="chart-quality-monthly" class="chart-container"></div>
             </div>
+            <!-- 新增板块：节点统计分析 -->
             <div class="card lg:col-span-2">
                 <h3 class="text-lg font-semibold mb-2">1.4 节点各品质总投放量对比（堆叠柱状图）</h3>
                 <p class="text-xs text-gray-500 mb-4">目标：按照源数据表中的【节点】字段，观察各大运营节点的资源投放力度。（横轴节点已按<b>该节点内最早活动上线日期</b>由左至右时序排列。空节点已被过滤。受全局筛选控制）</p>
@@ -126,6 +152,7 @@
             </div>
         </div>
 
+        <!-- 模块二：特定节点（斋月）分析 -->
         <h2 class="text-xl font-bold mb-4 mt-8 border-l-4 border-purple-500 pl-3">模块二：特定节点（斋月）资源投放生态震荡分析</h2>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -142,6 +169,7 @@
         </div>
     </main>
 
+    <!-- 🌟 悬浮模态弹窗版数据详情表 🌟 -->
     <div id="detail-modal" class="hidden fixed inset-0 z-[100] bg-gray-900 bg-opacity-60 backdrop-blur-sm flex justify-center items-center p-4 sm:p-6 opacity-0 transition-opacity duration-300" onclick="handleBackdropClick(event)">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-7xl max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300" id="detail-modal-content">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-xl shrink-0">
@@ -158,6 +186,7 @@
             </div>
             
             <div class="p-6 overflow-auto flex-1 custom-scrollbar bg-white" id="modal-tables-container">
+                <!-- 价格计算汇总表 -->
                 <div class="mb-10 relative">
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="text-base font-bold text-gray-800 border-l-4 border-green-500 pl-3">所选物品价格计算详情</h4>
@@ -171,6 +200,7 @@
                             <thead class="bg-green-50" id="summary-table-head">
                                 <tr>
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">资源名称</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">活动类型</th>
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">资源类型</th>
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">资源品质</th>
                                     <th class="px-4 py-3 text-right text-xs font-semibold text-green-800 uppercase tracking-wider">投放总数量</th>
@@ -184,6 +214,7 @@
                     </div>
                 </div>
 
+                <!-- 原始底层明细表 -->
                 <div>
                     <h4 class="text-base font-bold text-gray-800 mb-3 border-l-4 border-blue-500 pl-3">底层数据关联明细</h4>
                     <div class="overflow-hidden border border-gray-200 rounded-lg">
@@ -225,6 +256,8 @@
         // 全局变量管理
         let globalRawAndProcessedData = []; 
         let currentFilteredData = [];       
+        let availableEventTypes = new Set();    
+        let selectedEventTypes = new Set();
         let availableResourceTypes = new Set();
         let selectedResourceTypes = new Set();
         let availableValueLevels = new Set();
@@ -364,11 +397,15 @@
                 
                 let rawQuality = row['资源品质'] ? row['资源品质'].trim() : '';
                 let rawValue = row['价值高低'] ? row['价值高低'].trim() : '';
-                let resourceType = row['资源类型'] ? row['资源类型'].trim() : '未知类型';
+                let resourceType = row['资源类型'] ? row['资源类型'].trim() : '';
                 let rawNode = row['节点'] ? row['节点'].trim() : ''; 
+                let rawEventType = row['活动类型'] ? row['活动类型'].trim() : ''; 
                 
-                if (!resourceType) resourceType = '未指定';
-                if (!rawQuality || !rawValue || rawQuality === '未分类' || rawValue === '未分类') return;
+                // 🌟 数据清洗：严格过滤空值和未知标签（不统计、不展示）
+                if (!rawQuality || rawQuality === '未分类') return;
+                if (!rawValue || rawValue === '未分类') return;
+                if (!resourceType || resourceType === '未分类' || resourceType === '未知类型') return;
+                if (!rawEventType || rawEventType === '未分类' || rawEventType === '未知活动类型') return;
 
                 let ramadanTagDynamic = '非斋月周期';
                 let ramadanTagFixed = '非斋月周期';
@@ -403,6 +440,7 @@
                     _parsedQuality: rawQuality,
                     _parsedValue: rawValue,
                     _parsedNode: rawNode,             
+                    _parsedEventType: rawEventType,   
                     _startDateObj: startDate,         
                     _ramadanTagDynamic: ramadanTagDynamic, 
                     _ramadanTagFixed: ramadanTagFixed,     
@@ -423,6 +461,55 @@
 
         // --- UI筛选器渲染与联动逻辑 ---
         function renderFiltersUI() {
+            // 1. 渲染全局活动类型筛选器
+            availableEventTypes = new Set(globalRawAndProcessedData.map(d => d._parsedEventType));
+            selectedEventTypes = new Set(availableEventTypes); 
+            
+            const containerEvent = document.getElementById('filter-options-event');
+            containerEvent.innerHTML = '';
+            
+            Array.from(availableEventTypes).sort((a,b)=>a.localeCompare(b)).forEach(type => {
+                const lbl = document.createElement('label');
+                lbl.className = 'inline-flex items-center cursor-pointer';
+                lbl.innerHTML = `
+                    <input type="checkbox" value="${type}" class="filter-item-event w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500" checked>
+                    <span class="ml-2 text-sm text-gray-700">${type}</span>
+                `;
+                containerEvent.appendChild(lbl);
+            });
+
+            const allCbEvent = document.getElementById('filter-all-event');
+            allCbEvent.checked = true;
+            allCbEvent.indeterminate = false;
+
+            allCbEvent.addEventListener('change', (e) => {
+                const isChecked = e.target.checked;
+                document.querySelectorAll('.filter-item-event').forEach(cb => cb.checked = isChecked);
+                if (isChecked) {
+                    selectedEventTypes = new Set(availableEventTypes);
+                } else {
+                    selectedEventTypes.clear();
+                }
+                applyFilterAndRender();
+            });
+
+            document.querySelectorAll('.filter-item-event').forEach(cb => {
+                cb.addEventListener('change', (e) => {
+                    if (e.target.checked) selectedEventTypes.add(e.target.value);
+                    else selectedEventTypes.delete(e.target.value);
+                    
+                    if (selectedEventTypes.size === availableEventTypes.size) {
+                        allCbEvent.checked = true; allCbEvent.indeterminate = false;
+                    } else if (selectedEventTypes.size === 0) {
+                        allCbEvent.checked = false; allCbEvent.indeterminate = false;
+                    } else {
+                        allCbEvent.checked = false; allCbEvent.indeterminate = true;
+                    }
+                    applyFilterAndRender();
+                });
+            });
+
+            // 2. 渲染全局资源类型筛选器
             availableResourceTypes = new Set(globalRawAndProcessedData.map(d => d._resourceType));
             selectedResourceTypes = new Set(availableResourceTypes); 
             
@@ -470,6 +557,7 @@
                 });
             });
 
+            // 3. 渲染全局价值高低筛选器
             availableValueLevels = new Set(globalRawAndProcessedData.map(d => d._parsedValue));
             selectedValueLevels = new Set(availableValueLevels);
             
@@ -523,7 +611,8 @@
         function applyFilterAndRender() {
             currentFilteredData = globalRawAndProcessedData.filter(d => 
                 selectedResourceTypes.has(d._resourceType) && 
-                selectedValueLevels.has(d._parsedValue)
+                selectedValueLevels.has(d._parsedValue) &&
+                selectedEventTypes.has(d._parsedEventType)
             );
             
             renderQualityYearly(currentFilteredData);
@@ -537,6 +626,7 @@
             bindChartClickEvents();
         }
 
+        // --- 🎯 全新升级：整列穿透点击与反查逻辑 ---
         function handleChartClick(chartKey, params) {
             let filteredData = [];
             let clickTitle = "";
@@ -661,6 +751,8 @@
                 modalContent.classList.remove('scale-95');
             }, 10);
 
+            // 更新副标题以包含新筛选器
+            let activeEventsStr = Array.from(selectedEventTypes).join(', ') || '无';
             let activeTypesStr = Array.from(selectedResourceTypes).join(', ') || '无';
             let activeValuesStr = Array.from(selectedValueLevels).join(', ') || '无';
             let metricStr = currentDisplayMetric === 'count' ? '资源个数(数量)' : '总价值(数量×价值)';
@@ -669,7 +761,7 @@
                 <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 【${title}】的明细数据
             `;
-            subtitleEl.innerHTML = `当前图表筛选项 ➔ 资源类型: [${activeTypesStr}] | 价值高低: [${activeValuesStr}] | 当前统计算法: [${metricStr}] <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full font-bold">共 ${data.length} 条记录</span>`;
+            subtitleEl.innerHTML = `全局筛选条件 ➔ 活动类型: [${activeEventsStr}] | 资源类型: [${activeTypesStr}] | 价值高低: [${activeValuesStr}] | 当前统计算法: [${metricStr}] <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full font-bold">共 ${data.length} 条记录</span>`;
 
             // 清空旧数据
             thead.innerHTML = '';
@@ -697,14 +789,17 @@
                     let name = row['资源名称'] || '未命名资源';
                     let quality = row['_parsedQuality'] || '未分类';
                     let resourceType = row['_resourceType'] || '-'; 
+                    let eventType = row['_parsedEventType'] || '-';
                     
-                    let key = name + '|' + quality + '|' + resourceType;
+                    // 使用 资源名称 + 资源品质 + 资源类型 + 活动类型 作为唯一标识进行精确聚合
+                    let key = name + '|' + quality + '|' + resourceType + '|' + eventType;
 
                     if (!summaryMap[key]) {
                         summaryMap[key] = {
                             name: name,
                             quality: quality,
                             resourceType: resourceType, 
+                            eventType: eventType,
                             unitValue: row._unitValue || 0,
                             totalCount: 0,
                             totalValue: 0
@@ -717,6 +812,7 @@
                     grandTotalValue += row._totalValue;
                 });
 
+                // 按资源品质排序 (最高品质在最前，同品质按名称排序)
                 const sortedSummary = Object.values(summaryMap).sort((a, b) => {
                     const rankA = getQualityLegendRank(a.quality);
                     const rankB = getQualityLegendRank(b.quality);
@@ -729,6 +825,7 @@
                 sortedSummary.forEach((item, idx) => {
                     currentSummaryDataForExport.push({
                         '资源名称': item.name,
+                        '活动类型': item.eventType,
                         '资源类型': item.resourceType, 
                         '资源品质': item.quality,
                         '投放总数量': item.totalCount,
@@ -744,6 +841,7 @@
 
                     tr.innerHTML = `
                         <td class="px-4 py-3 text-gray-800 font-medium">${item.name}</td>
+                        <td class="px-4 py-3 text-gray-600">${item.eventType}</td>
                         <td class="px-4 py-3 text-gray-600">${item.resourceType}</td>
                         <td class="px-4 py-3">${qLabel}</td>
                         <td class="px-4 py-3 text-right font-semibold text-gray-800">${item.totalCount.toLocaleString()}</td>
@@ -755,6 +853,7 @@
 
                 currentSummaryDataForExport.push({
                     '资源名称': '当前选中数据合计',
+                    '活动类型': '-',
                     '资源类型': '-',
                     '资源品质': '-',
                     '投放总数量': grandTotalCount,
@@ -764,12 +863,13 @@
 
                 sumTfoot.innerHTML = `
                     <tr>
-                        <td class="px-4 py-3 text-gray-800 text-right" colspan="3">当前选中数据合计：</td>
+                        <td class="px-4 py-3 text-gray-800 text-right" colspan="4">当前选中数据合计：</td>
                         <td class="px-4 py-3 text-right text-blue-700 text-lg">${grandTotalCount.toLocaleString()}</td>
                         <td class="px-4 py-3 text-right text-gray-500">-</td>
                         <td class="px-4 py-3 text-right text-red-600 text-lg">${grandTotalValue.toLocaleString()}</td>
                     </tr>
                 `;
+
 
                 // ==========================================
                 // 2. 底层数据关联明细表渲染
@@ -855,7 +955,13 @@
                     name: '总计', type: 'bar', 
                     barGap: '-100%', 
                     z: 1,            
-                    silent: true, 
+                    tooltip: { 
+                        formatter: p => {
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.name}<br/>${p.marker} <b>该列${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
                     label: { show: true, position: 'top', formatter: p => formatLabelValue(totals[p.dataIndex]), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
                     data: totals
@@ -901,7 +1007,13 @@
                     name: '总计', type: 'bar', 
                     barGap: '-100%', 
                     z: 1,
-                    silent: true, 
+                    tooltip: { 
+                        formatter: p => {
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.name}<br/>${p.marker} <b>该列${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
                     label: { show: true, position: 'top', formatter: p => formatLabelValue(totals[p.dataIndex]), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
                     data: totals
@@ -947,7 +1059,13 @@
                     name: '总计', type: 'bar', 
                     barGap: '-100%', 
                     z: 1, 
-                    silent: true, 
+                    tooltip: { 
+                        formatter: p => {
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.name}<br/>${p.marker} <b>该列${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
                     label: { 
                         show: true, 
                         position: 'top', 
@@ -1013,7 +1131,13 @@
                     name: '总计', type: 'bar', 
                     barGap: '-100%', 
                     z: 1, 
-                    silent: true, 
+                    tooltip: { 
+                        formatter: p => {
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.name}<br/>${p.marker} <b>节点${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看该时段全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
                     label: { 
                         show: true, 
                         position: 'top', 
@@ -1090,7 +1214,14 @@
                 seriesData.push({
                     name: '总计', type: 'bar', 
                     barGap: '-100%', barMaxWidth: 50, z: 1, 
-                    silent: true, 
+                    tooltip: { 
+                        formatter: p => {
+                            if(!p.data || !p.data._year) return '';
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.data._year}年 ${p.data._period} (${p.data._nDays}天)<br/>${p.marker} <b>列合计 ${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看整列全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
                     label: { show: true, position: 'top', formatter: p => formatLabelValue(p.value), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
                     data: totalsData
@@ -1170,7 +1301,14 @@
                 seriesData.push({
                     name: '总计', type: 'bar', 
                     barGap: '-100%', barMaxWidth: 50, z: 1, 
-                    silent: true, 
+                    tooltip: { 
+                        formatter: p => {
+                            if(!p.data || !p.data._year) return '';
+                            let metricLabel = currentDisplayMetric === 'count' ? '总数量' : '总价值';
+                            return `${p.data._year}年 ${p.data._customName}<br/>${p.marker} <b>列合计 ${metricLabel}: ${p.value.toLocaleString()}</b><br/><span style="font-size:12px;color:#999;">(点击查看整列全品类明细)</span>`;
+                        }
+                    },
+                    silent: false, 
                     label: { show: true, position: 'top', formatter: p => formatLabelValue(p.value), color: '#333', fontWeight: 'bold' },
                     itemStyle: { color: 'transparent' },
                     data: totalsData
@@ -1198,9 +1336,12 @@
         // --- 模拟数据生成 与 文件上传解析 ---
         function generateMockData() {
             const data = [];
-            const qualities = ['蓝品（A）', '橙品（S/SP）', '紫品（A/B）', '绿品（C）'];
+            const qualities = ['蓝品（A/B）', '橙品（S/SP）', '紫品（A+）', '绿品（C）', '其他'];
             const values = ['局内--高价值外显资源', '局内中低价值外显资源', '局外社交外显资源', '抽奖券类资源', '盲盒类资源'];
-            const resTypes = ['永久', '限时', '一次性']; 
+            
+            // 🌟 严格限制模拟数据的枚举值，防止污染 UI
+            const resTypes = ['永久', '限时']; 
+            const eventTypes = ['活跃', '付费']; 
             
             const possibleValues = [10, 50, 100, 500, 1000]; 
             
@@ -1212,11 +1353,11 @@
                     let rows = Math.floor(Math.random() * 10 * multiplier) + 5;
                     
                     let mockNodeName = '';
-                    if (m === 1 || m === 2) mockNodeName = y + '年 春节/情人节大推';
-                    else if (m === 4 || m === 5) mockNodeName = y + '年 初夏派对版本';
-                    else if (m === 7 || m === 8) mockNodeName = y + '年 暑假超级盛典';
-                    else if (m === 10) mockNodeName = y + '年 万圣节狂欢';
-                    else if (m === 12) mockNodeName = y + '年 冰雪圣诞季';
+                    if (m === 1 || m === 2) mockNodeName = y + '年 春节大推';
+                    else if (m === 4 || m === 5) mockNodeName = y + '年 斋月版本';
+                    else if (m === 7 || m === 8) mockNodeName = y + '年 暑假大推';
+                    else if (m === 10) mockNodeName = y + '年 万圣节版本';
+                    else if (m === 12) mockNodeName = y + '年 冰雪大推';
                     
                     for (let i = 0; i < rows; i++) {
                         let d = Math.floor(Math.random() * 28) + 1;
@@ -1226,9 +1367,9 @@
                             '节点': mockNodeName, 
                             '数量': Math.floor(Math.random() * 20) + 1,
                             '行为': '登录',
-                            '资源名称': '模拟核心武器',
+                            '资源名称': '模拟核心物资',
                             '资源品质': qualities[Math.floor(Math.random() * qualities.length)],
-                            '活动类型': '活跃',
+                            '活动类型': eventTypes[Math.floor(Math.random() * eventTypes.length)],
                             '活动上线日期': dateStr,
                             '活动下线日期': '',
                             '限时资源上线日期': '',
@@ -1241,7 +1382,8 @@
                             '月': `${y}年${m}月`,
                             '价值高低': values[Math.floor(Math.random() * values.length)],
                             '月份': m,
-                            '文本 4': '模拟文本'
+                            '文本 4': '模拟文本',
+                            '父记录': ''
                         });
                     }
                 }
@@ -1272,50 +1414,11 @@
             });
         }
 
-        // ==========================================
-        // 自动读取同级目录 CSV 文件的逻辑
-        // ==========================================
-        
-        // 💡 配置你放在 GitHub 同目录下的 CSV 文件名
-        const DEFAULT_CSV_FILENAME = './data.csv'; 
-
         window.onload = () => {
-            // 页面加载时，优先尝试自动读取同级目录下的 CSV
-            autoLoadCSV(DEFAULT_CSV_FILENAME);
-        };
-
-        function autoLoadCSV(csvPath) {
-            document.getElementById('data-status').innerHTML = `<span class="text-blue-600 font-bold">正在尝试自动加载同目录下的 ${csvPath}...</span>`;
-
-            Papa.parse(csvPath, {
-                download: true, // 开启下载远端/同级目录文件模式
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    const parsedData = results.data;
-                    // 判断是否成功读取到了有效数据
-                    if (parsedData && parsedData.length > 0) {
-                        document.getElementById('data-status').innerHTML = `<span class="text-green-600 font-bold">已成功自动加载数据源 ${csvPath} (${parsedData.length} 行)！</span>`;
-                        globalRawAndProcessedData = processData(parsedData);
-                        renderFiltersUI(); 
-                    } else {
-                        fallbackToMockData("文件内容为空或格式错误");
-                    }
-                },
-                error: function(err) {
-                    console.warn('自动读取 CSV 失败，将回退使用内置模拟数据。原因:', err);
-                    fallbackToMockData("未找到指定的 CSV 文件");
-                }
-            });
-        }
-
-        // 容错机制：当自动加载失败时，使用原本的模拟数据兜底
-        function fallbackToMockData(reason) {
-            document.getElementById('data-status').innerHTML = `<span class="text-yellow-600 font-bold">自动加载 ${DEFAULT_CSV_FILENAME} 失败 (${reason})，当前正在使用内置模拟数据展示</span>`;
             const mockData = generateMockData();
             globalRawAndProcessedData = processData(mockData);
             renderFiltersUI(); 
-        }
+        };
 
     </script>
 </body>
